@@ -19,17 +19,20 @@ pub fn cmd_call_back(cmd: Cmd) -> u8 {
 USAGE:
     jvst [OPTIONS] [SUBCOMMAND]
 OPTIONS:
-    $ jvst -V,--version Print version info and exit
-    $ jvst -h,--help    Prints help information
+    $ jvst -V,--version    Print version info and exit
+    $ jvst -h,--help       Prints help information
+    $ jvst -cp,--classpath show class abs path
     "
             );
             1
         }
         Cmd::CP(clzpath, clz) => {
-            let user = Userpath { path: clzpath };
+            let paths: Vec<String> = Vec::new();
+            let user = Userpath {
+                path: clzpath,
+                paths: paths,
+            };
             user.readclz(&clz);
-            // userpath = new userpath{path};
-            // userpath.readclz(clz);
             1
         }
         _ => {

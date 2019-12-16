@@ -1,58 +1,81 @@
-use std::fs::{self, DirEntry};
+use std::fs::{self, DirEntry, File};
 use std::io;
 use std::path::Path;
 
-pub fn visit_dirs(dir: &Path, clz_nm: &str, cb: &dyn Fn(&DirEntry, &str)) -> io::Result<()> {
+pub fn visit_dirs(
+    dir: &Path,
+    clz_nm: &str,
+    paths: &mut Vec<String>,
+    cb: &dyn Fn(&DirEntry, &mut Vec<String>, &str),
+) -> io::Result<()> {
     if dir.is_dir() {
         for entry in fs::read_dir(dir)? {
             let entry = entry?;
             let path = entry.path();
             if path.is_dir() {
-                visit_dirs(&path, clz_nm, cb)?;
+                visit_dirs(&path, clz_nm, paths, cb)?;
             } else {
-                cb(&entry, clz_nm);
+                cb(&entry, paths, clz_nm);
             }
         }
     }
     Ok(())
 }
 
-pub fn cb_eqn(de: &DirEntry, clz_nm: &str) {
+pub fn visit_zip(clz_zip: &Path, clz_nm: &str) {
+    let file = File::open(clz_zip).unwrap();
+    let mut archive = zip::ZipArchive::new(file).unwrap();
+    for i in 0..archive.len() {
+        let mut file = archive.by_index(i).unwrap();
+        let outpath = file.sanitized_name();
+        let name = outpath.file_name().unwrap();
+        println!("{:?}", name);
+    }
+}
+
+pub fn cb_eqn(de: &DirEntry, paths: &mut Vec<String>, clz_nm: &str) {
     if let Some(p) = de.path().to_str() {
-        println!("{}", p);
         if p.ends_with(clz_nm) {
+            paths.push(p.to_string());
             p
         } else {
             "no match path"
         }
     } else {
         "no match path"
-        // Err((""))
     };
 }
 
-pub fn exp_dir(path: String, clz_nm: &str) {
+pub fn exp_dir(path: String, paths: &mut Vec<String>, clz_nm: &str) {
     let clz_path = Path::new(path.as_str());
     println!(
         "the clz file path is {:?}",
-        visit_dirs(clz_path, clz_nm, &cb_eqn)
-    )
+        visit_dirs(clz_path, clz_nm, paths, &cb_eqn)
+    );
+    for path in paths {
+        println!("{}", path);
+    }
 }
 
 pub fn exp_cmp(path: String, clz_nm: &str) {}
 
-pub fn exp_cop(path: String, clz_nm: &str) {}
+pub fn exp_cop(path: String, clz_nm: &str) {
+    let clz_path = Path::new(path.as_str());
+}
 
 pub fn exp_wlid(path: String, clz_nm: &str) {}
 
 pub struct Bootpath {
     pub path: String,
+    pub paths: Vec<String>,
 }
 pub struct Extpath {
     pub path: String,
+    pub paths: Vec<String>,
 }
 pub struct Userpath {
     pub path: String,
+    pub paths: Vec<String>,
 }
 
 impl Bootpath {
@@ -69,6 +92,10 @@ impl Extpath {
 
 impl Userpath {
     pub fn readclz(&self, clz_nm: &str) {
-        exp_dir(self.path.clone(), clz_nm);
+        if (self.path.ends_with(".zip") || self.path.ends_with(".jar")) {
+            exp_cop(self.path.clone(), clz_nm);
+        } else {
+            exp_dir(self.path.clone(), &mut self.paths.clone(), clz_nm);
+        }
     }
 }

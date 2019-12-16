@@ -1,0 +1,24 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "rust",
+            "type": "lldb",
+            "request": "launch",
+            "program": "${workspaceRoot}/target/debug/jvst",
+            "args": [
+                "cp",
+                "/Users/jaykim/proc/java/nutlog/target/classes.zip",
+                "Events.class"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "lldb"
+        }
+    ]
+}
