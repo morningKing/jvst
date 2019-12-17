@@ -1,3 +1,4 @@
+pub mod parse;
 pub mod path;
 use crate::cmd::path::Userpath;
 pub enum Cmd {

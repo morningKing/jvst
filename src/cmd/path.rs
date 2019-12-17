@@ -1,3 +1,4 @@
+use super::parse;
 use std::fs::{self, DirEntry, File};
 use std::io;
 use std::path::Path;
@@ -55,9 +56,6 @@ pub fn exp_dir(path: String, paths: &mut Vec<String>, clz_nm: &str) {
         "the clz file path is {:?}",
         visit_dirs(clz_path, clz_nm, paths, &cb_eqn)
     );
-    for path in paths {
-        println!("{}", path);
-    }
 }
 
 pub fn exp_cmp(path: String, clz_nm: &str) {}
@@ -65,9 +63,6 @@ pub fn exp_cmp(path: String, clz_nm: &str) {}
 pub fn exp_cop(path: String, paths: &mut Vec<String>, clz_nm: &str) {
     let clz_path = Path::new(path.as_str());
     visit_zip(clz_path, paths, clz_nm);
-    for path in paths {
-        println!("{}", path);
-    }
 }
 
 pub fn exp_wlid(path: String, clz_nm: &str) {}
@@ -99,10 +94,19 @@ impl Extpath {
 
 impl Userpath {
     pub fn readclz(&self, clz_nm: &str) {
+        let mut paths = self.paths.clone();
         if (self.path.ends_with(".zip") || self.path.ends_with(".jar")) {
-            exp_cop(self.path.clone(), &mut self.paths.clone(), clz_nm);
+            exp_cop(self.path.clone(), &mut paths, clz_nm);
+            for path in paths {
+                println!("{}:", path);
+                parse::show_clz_bytes(&path);
+            }
         } else {
-            exp_dir(self.path.clone(), &mut self.paths.clone(), clz_nm);
+            exp_dir(self.path.clone(), &mut paths, clz_nm);
+            for path in paths {
+                println!("{}:", path);
+                parse::show_clz_bytes(&path);
+            }
         }
     }
 }
