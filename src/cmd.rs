@@ -1,6 +1,8 @@
+pub mod classfile;
+pub mod classpath;
 pub mod parse;
-pub mod path;
-use crate::cmd::path::Userpath;
+pub mod visit;
+use crate::cmd::classpath::Userpath;
 pub enum Cmd {
     Version,
     CP(String, String),
