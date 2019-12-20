@@ -1,6 +1,5 @@
 pub mod classfile;
 pub mod classpath;
-pub mod parse;
 pub mod visit;
 use crate::cmd::classpath::Userpath;
 pub enum Cmd {

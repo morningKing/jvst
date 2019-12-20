@@ -31,17 +31,17 @@ impl Userpath {
         if self.path.ends_with(".zip") {
             visit::exp_cop(self.path.clone(), &mut paths, clz_nm);
             for path in paths {
-                println!("{}:", path);
+                println!("abs path :{}", path);
             }
         } else if self.path.ends_with(".jar") {
             visit::exp_cop(self.path.clone(), &mut paths, clz_nm);
             for path in paths {
-                println!("{}", path);
+                println!("abs path :{}", path);
             }
         } else {
             visit::exp_dir(self.path.clone(), &mut paths, clz_nm);
             for path in paths {
-                println!("{}:", path);
+                println!("abs path :{}", path);
             }
         }
     }

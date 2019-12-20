@@ -1,3 +1,4 @@
+use super::classfile;
 use std::fs::{self, DirEntry, File};
 use std::io;
 use std::io::prelude::*;
@@ -34,10 +35,7 @@ pub fn visit_zip(clz_zip: &Path, paths: &mut Vec<String>, clz_nm: &str) -> io::R
 
             let mut buffer = Vec::new();
             file.read_to_end(&mut buffer)?;
-            for buf in buffer {
-                print!(" {}", buf);
-            }
-
+            classfile::read_chk_magic(&buffer);
             return Ok(());
         }
     }
