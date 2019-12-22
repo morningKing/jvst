@@ -35,7 +35,7 @@ pub fn visit_zip(clz_zip: &Path, paths: &mut Vec<String>, clz_nm: &str) -> io::R
 
             let mut buffer = Vec::new();
             file.read_to_end(&mut buffer)?;
-            classfile::read_chk_magic(&buffer);
+            classfile::readclz(&buffer);
             return Ok(());
         }
     }
