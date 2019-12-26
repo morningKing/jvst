@@ -50,9 +50,10 @@ fn cb_eqn(de: &DirEntry, paths: &mut Vec<String>, clz_nm: &str) -> io::Result<()
             let mut file = File::open(p)?;
             let mut buffer = Vec::new();
             file.read_to_end(&mut buffer)?;
-            for buf in buffer {
-                print!(" {}", buf);
-            }
+            // for buf in buffer {
+            //     print!(" {}", buf);
+            // }
+            classfile::readclz(&buffer);
             return Ok(());
         } else {
             return Ok(());

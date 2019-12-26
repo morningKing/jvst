@@ -1,7 +1,14 @@
 pub mod clz_reader;
 pub mod const_pool;
+pub mod cp_class_info;
 pub mod cp_info;
+pub mod cp_invoke_dyn_info;
+pub mod cp_name_type_info;
 pub mod cp_number_info;
+pub mod cp_ref_info;
+pub mod cp_string_info;
+pub mod cp_utf8_info;
+
 pub struct contant_pool {}
 
 pub struct constant_info {}
@@ -39,24 +46,24 @@ pub fn readclz(data: &Vec<u8>) {
 //检查4字节魔数 cafababe
 pub fn read_chk_magic(data: &Vec<u8>) -> u32 {
     let res = String::from("");
-    let index = 0;
-    let (res, index) = clz_reader::read_u32_string(data, res, index);
+    let mut index = 0;
+    let res = clz_reader::read_u32_string(data, res, &mut index);
     println!("magic : {}, index : {}", res, index);
     index
 }
 //检查主版本号
 pub fn read_chk_major_version(data: &Vec<u8>) -> u32 {
     let res = String::from("");
-    let index = 6;
-    let (res, index) = clz_reader::read_u16_string(data, res, index);
+    let mut index = 6;
+    let res = clz_reader::read_u16_string(data, res, &mut index);
     println!("major version : {}, index : {}", res, index);
     index
 }
 //检查次版本号
 pub fn read_chk_minor_version(data: &Vec<u8>) -> u32 {
     let res = String::from("");
-    let index = 4;
-    let (res, index) = clz_reader::read_u16_string(data, res, index);
+    let mut index = 4;
+    let res = clz_reader::read_u16_string(data, res, &mut index);
     println!("minor version : {}, index : {}", res, index);
     index
 }

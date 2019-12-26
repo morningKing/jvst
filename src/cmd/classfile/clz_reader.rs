@@ -1,171 +1,149 @@
 extern crate hex;
 use std::convert::TryInto;
 use std::mem;
+use std::str;
 
-pub fn read_u8_string(data: &[u8], mut res: String, mut index: u32) -> (String, u32) {
-    let mut tmparr: [u8; 1] = [0; 1];
-    let end = index + 1;
-    let mut tix = 0;
-    for (i, n) in data.iter().enumerate() {
-        if i >= index.try_into().unwrap() && i < end.try_into().unwrap() {
-            tmparr[tix] = *n;
-            tix = tix + 1;
-        } else if i == end.try_into().unwrap() {
-            break;
-        }
-    }
-    index = index + 1;
-    res = hex::encode(tmparr);
-    (res, index)
+fn pop64(barry: &[u8], start: u32, end: u32) -> &[u8; 8] {
+    let start = start.try_into().unwrap();
+    let end = end.try_into().unwrap();
+    barry[start..end]
+        .try_into()
+        .expect("slice with incorrect length")
 }
 
-pub fn read_u8(data: &[u8], mut res: u8, mut index: u32) -> (u8, u32) {
+fn pop32(barry: &[u8], start: u32, end: u32) -> &[u8; 4] {
+    let start = start.try_into().unwrap();
+    let end = end.try_into().unwrap();
+    barry[start..end]
+        .try_into()
+        .expect("slice with incorrect length")
+}
+
+fn pop16(barry: &[u8], start: u32, end: u32) -> &[u8; 2] {
+    let start = start.try_into().unwrap();
+    let end = end.try_into().unwrap();
+    barry[start..end]
+        .try_into()
+        .expect("slice with incorrect length")
+}
+
+pub fn read_u8_string(data: &[u8], mut res: String, index: &mut u32) -> String {
     let mut tmparr: [u8; 1] = [0; 1];
-    let end = index + 1;
+    let end = *index + 1;
     let mut tix = 0;
     for (i, n) in data.iter().enumerate() {
-        if i >= index.try_into().unwrap() && i < end.try_into().unwrap() {
+        if i >= (*index).try_into().unwrap() && i < end.try_into().unwrap() {
             tmparr[tix] = *n;
             tix = tix + 1;
         } else if i == end.try_into().unwrap() {
             break;
         }
     }
-    index = index + 1;
+    *index = *index + 1;
+    res = hex::encode(tmparr);
+    res
+}
+
+pub fn read_u8(data: &[u8], mut res: u8, mut index: &mut u32) -> u8 {
+    let mut tmparr: [u8; 1] = [0; 1];
+    let end = *index + 1;
+    let mut tix = 0;
+    for (i, n) in data.iter().enumerate() {
+        if i >= (*index).try_into().unwrap() && i < end.try_into().unwrap() {
+            tmparr[tix] = *n;
+            tix = tix + 1;
+        } else if i == end.try_into().unwrap() {
+            break;
+        }
+    }
+    *index = *index + 1;
     res = tmparr[0];
-    (res, index)
+    res
 }
 
-pub fn read_u16_string(data: &[u8], mut res: String, mut index: u32) -> (String, u32) {
-    let mut tmparr: [u8; 2] = [0; 2];
-    let end = index + 2;
-    let mut tix = 0;
-    for (i, n) in data.iter().enumerate() {
-        if i >= index.try_into().unwrap() && i < end.try_into().unwrap() {
-            tmparr[tix] = *n;
-            tix = tix + 1;
-        } else if i == end.try_into().unwrap() {
-            break;
-        }
-    }
-    index = index + 2;
+pub fn read_u16_string(data: &[u8], mut res: String, index: &mut u32) -> (String) {
+    let end = *index + 2;
+    let tmparr = pop16(data, *index, end);
+    *index = *index + 2;
     res = hex::encode(tmparr);
-    (res, index)
+    res
 }
 
-pub fn read_u16(data: &[u8], mut res: u16, mut index: u32) -> (u16, u32) {
-    let mut tmparr: [u8; 2] = [0; 2];
-    let end = index + 2;
-    let mut tix = 0;
-    for (i, n) in data.iter().enumerate() {
-        if i >= index.try_into().unwrap() && i < end.try_into().unwrap() {
-            tmparr[tix] = *n;
-            tix = tix + 1;
-        } else if i == end.try_into().unwrap() {
-            break;
-        }
-    }
-    index = index + 2;
+pub fn read_u16(data: &[u8], mut res: u16, mut index: &mut u32) -> u16 {
+    let end = *index + 2;
+    let mut tmparr = pop16(data, *index, end);
+    *index = *index + 2;
+    let mut arr = *tmparr;
     unsafe {
-        tmparr.reverse(); //transmute函数要对传入的数组做逆序处理 如[0,1] => 256 [1,0] => 1
-        res = mem::transmute::<[u8; 2], u16>(tmparr);
+        arr.reverse(); //transmute函数要对传入的数组做逆序处理 如[0,1] => 256 [1,0] => 1
+        res = mem::transmute::<[u8; 2], u16>(arr);
     }
-    (res, index)
+    res
 }
 
-pub fn read_u32_string(data: &[u8], mut res: String, mut index: u32) -> (String, u32) {
-    let mut tmparr: [u8; 4] = [0; 4];
-    let end = index + 4;
-    let mut tix = 0;
-    for (i, n) in data.iter().enumerate() {
-        if i >= index.try_into().unwrap() && i < end.try_into().unwrap() {
-            tmparr[tix] = *n;
-            tix = tix + 1;
-        } else if i == end.try_into().unwrap() {
-            break;
-        }
-    }
-    index = index + 4;
+pub fn read_u32_string(data: &[u8], mut res: String, index: &mut u32) -> String {
+    let end = *index + 4;
+    let tmparr = pop32(data, *index, end);
+    *index = *index + 4;
     res = hex::encode(tmparr);
-    (res, index)
+    res
 }
 
-pub fn read_i32(data: &[u8], mut res: i32, mut index: u32) -> (i32, u32) {
-    let mut tmparr: [u8; 4] = [0; 4];
-    let end = index + 4;
-    let mut tix = 0;
-    for (i, n) in data.iter().enumerate() {
-        if i >= index.try_into().unwrap() && i < end.try_into().unwrap() {
-            tmparr[tix] = *n;
-            tix = tix + 1;
-        } else if i == end.try_into().unwrap() {
-            break;
-        }
-    }
-    index = index + 4;
+pub fn read_i32(data: &[u8], mut res: i32, index: &mut u32) -> i32 {
+    let end = *index + 4;
+    let mut tmparr = pop32(data, *index, end);
+    *index = *index + 4;
+    let mut arr = *tmparr;
     unsafe {
-        tmparr.reverse(); //transmute函数要对传入的数组做逆序处理 如[0,1] => 256 [1,0] => 1
-        res = mem::transmute::<[u8; 4], i32>(tmparr);
+        arr.reverse(); //transmute函数要对传入的数组做逆序处理 如[0,1] => 256 [1,0] => 1
+        res = mem::transmute::<[u8; 4], i32>(arr);
     }
-    (res, index)
+    res
 }
 
-pub fn read_f32(data: &[u8], mut res: f32, mut index: u32) -> (f32, u32) {
-    let mut tmparr: [u8; 4] = [0; 4];
-    let end = index + 4;
-    let mut tix = 0;
-    for (i, n) in data.iter().enumerate() {
-        if i >= index.try_into().unwrap() && i < end.try_into().unwrap() {
-            tmparr[tix] = *n;
-            tix = tix + 1;
-        } else if i == end.try_into().unwrap() {
-            break;
-        }
-    }
-    index = index + 4;
+pub fn read_f32(data: &[u8], mut res: f32, index: &mut u32) -> f32 {
+    let end = *index + 4;
+    let mut tmparr = pop32(data, *index, end);
+    *index = *index + 4;
+    let mut arr = *tmparr;
     unsafe {
-        tmparr.reverse(); //transmute函数要对传入的数组做逆序处理 如[0,1] => 256 [1,0] => 1
-        res = mem::transmute::<[u8; 4], f32>(tmparr);
+        arr.reverse(); //transmute函数要对传入的数组做逆序处理 如[0,1] => 256 [1,0] => 1
+        res = mem::transmute::<[u8; 4], f32>(arr);
     }
-    (res, index)
+    res
 }
 
-pub fn read_i64(data: &[u8], mut res: i64, mut index: u32) -> (i64, u32) {
-    let mut tmparr: [u8; 8] = [0; 8];
-    let end = index + 8;
-    let mut tix = 0;
-    for (i, n) in data.iter().enumerate() {
-        if i >= index.try_into().unwrap() && i < end.try_into().unwrap() {
-            tmparr[tix] = *n;
-            tix = tix + 1;
-        } else if i == end.try_into().unwrap() {
-            break;
-        }
-    }
-    index = index + 8;
+pub fn read_i64(data: &[u8], mut res: i64, index: &mut u32) -> i64 {
+    let end = *index + 8;
+    let mut tmparr = pop64(data, *index, end);
+    *index = *index + 8;
+    let mut arr = *tmparr;
     unsafe {
-        tmparr.reverse(); //transmute函数要对传入的数组做逆序处理 如[0,1] => 256 [1,0] => 1
-        res = mem::transmute::<[u8; 8], i64>(tmparr);
+        arr.reverse(); //transmute函数要对传入的数组做逆序处理 如[0,1] => 256 [1,0] => 1
+        res = mem::transmute::<[u8; 8], i64>(arr);
     }
-    (res, index)
+    res
 }
 
-pub fn read_f64(data: &[u8], mut res: f64, mut index: u32) -> (f64, u32) {
-    let mut tmparr: [u8; 8] = [0; 8];
-    let end = index + 8;
-    let mut tix = 0;
-    for (i, n) in data.iter().enumerate() {
-        if i >= index.try_into().unwrap() && i < end.try_into().unwrap() {
-            tmparr[tix] = *n;
-            tix = tix + 1;
-        } else if i == end.try_into().unwrap() {
-            break;
-        }
-    }
-    index = index + 8;
+pub fn read_f64(data: &[u8], mut res: f64, mut index: &mut u32) -> f64 {
+    let end = *index + 8;
+    let mut tmparr = pop64(data, *index, end);
+    *index = *index + 8;
+    let mut arr = *tmparr;
     unsafe {
-        tmparr.reverse(); //transmute函数要对传入的数组做逆序处理 如[0,1] => 256 [1,0] => 1
-        res = mem::transmute::<[u8; 8], f64>(tmparr);
+        arr.reverse(); //transmute函数要对传入的数组做逆序处理 如[0,1] => 256 [1,0] => 1
+        res = mem::transmute::<[u8; 8], f64>(arr);
     }
-    (res, index)
+    res
+}
+
+pub fn read_utf8(data: &[u8], mut res: String, index: &mut u32, len: u32) -> String {
+    let start: usize = (*index).try_into().unwrap();
+    let end: usize = (*index + len).try_into().unwrap();
+    *index = *index + len;
+
+    let temparr = &data[start..end];
+    let uft8_str = str::from_utf8(temparr).unwrap();
+    res = uft8_str.to_string();
+    res
 }

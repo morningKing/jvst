@@ -1,3 +1,4 @@
+use super::clz_reader;
 use super::cp_info::CpInfo;
 
 pub struct CpFieldRefinfo {
@@ -6,8 +7,18 @@ pub struct CpFieldRefinfo {
 }
 
 impl CpInfo for CpFieldRefinfo {
-    fn read_inf(&mut self, data: &Vec<u8>, index: u32) -> u32 {
-        0
+    fn read_inf(&mut self, data: &Vec<u8>, index: &mut u32) -> u32 {
+        let class_index = 0;
+        let class_index = clz_reader::read_u16(data, class_index, index);
+        self.class_index = class_index;
+        let name_type_index = 0;
+        let name_type_index = clz_reader::read_u16(data, name_type_index, index);
+        self.name_type_index = name_type_index;
+        println!(
+            "fieldRefinfo : {},{}",
+            self.class_index, self.name_type_index
+        );
+        *index
     }
 }
 
@@ -17,9 +28,18 @@ pub struct CpIfaceMethodinfo {
 }
 
 impl CpInfo for CpIfaceMethodinfo {
-    fn read_inf(&mut self, data: &Vec<u8>, index: u32) -> u32 {
-        // self.var = 0.0;
-        0
+    fn read_inf(&mut self, data: &Vec<u8>, index: &mut u32) -> u32 {
+        let class_index = 0;
+        let class_index = clz_reader::read_u16(data, class_index, index);
+        self.class_index = class_index;
+        let name_type_index = 0;
+        let name_type_index = clz_reader::read_u16(data, name_type_index, index);
+        self.name_type_index = name_type_index;
+        println!(
+            "ifaceMethodinfo : {},{}",
+            self.class_index, self.name_type_index
+        );
+        *index
     }
 }
 
@@ -29,8 +49,17 @@ pub struct CpMethodRefinfo {
 }
 
 impl CpInfo for CpMethodRefinfo {
-    fn read_inf(&mut self, data: &Vec<u8>, index: u32) -> u32 {
-        // self.var = 0.0;
-        0
+    fn read_inf(&mut self, data: &Vec<u8>, index: &mut u32) -> u32 {
+        let class_index = 0;
+        let class_index = clz_reader::read_u16(data, class_index, index);
+        self.class_index = class_index;
+        let name_type_index = 0;
+        let name_type_index = clz_reader::read_u16(data, name_type_index, index);
+        self.name_type_index = name_type_index;
+        println!(
+            "methodRefinfo : {},{}",
+            self.class_index, self.name_type_index
+        );
+        *index
     }
 }
