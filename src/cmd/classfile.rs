@@ -9,8 +9,6 @@ pub mod cp_ref_info;
 pub mod cp_string_info;
 pub mod cp_utf8_info;
 
-pub struct contant_pool {}
-
 pub struct constant_info {}
 
 pub struct field {}
@@ -23,8 +21,7 @@ pub struct Classfile {
     pub magic: u32,
     pub minor_version: u16,
     pub major_version: u16,
-    pub const_pool_count: u16,
-    pub const_pool: Vec<contant_pool>,
+    pub const_pool: const_pool::Constantpool,
     pub access_flags: u16,
     pub this_class: u16,
     pub super_class: u16,
@@ -37,10 +34,19 @@ pub struct Classfile {
 }
 
 pub fn readclz(data: &Vec<u8>) {
+    let mut index = 0;
     read_chk_magic(data);
     read_chk_minor_version(data);
     read_chk_major_version(data);
-    const_pool::read_constant_pool(data);
+    index = const_pool::read_constant_pool(data);
+    let mut access_flag = 0;
+    access_flag = clz_reader::read_u16(data, access_flag, &mut index);
+    let mut this_class = 0;
+    this_class = clz_reader::read_u16(data, this_class, &mut index);
+    let mut super_class = 0;
+    super_class = clz_reader::read_u16(data, super_class, &mut index);
+    let mut slice: Vec<u16> = Vec::new();
+    clz_reader::read_u16s(data, &mut slice, &mut index);
 }
 
 //检查4字节魔数 cafababe

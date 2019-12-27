@@ -10,25 +10,9 @@ use super::cp_utf8_info::CpUTF8info;
 use std::collections::HashMap;
 // use std::ops::Deref;
 
-//自定义常量指针
-// struct CpBox<T>(T);
-// impl<T> CpBox<T> {
-//     fn new(x: T) -> CpBox<T> {
-//         CpBox(x)
-//     }
-// }
-//定义Deref 解引用
-// impl<T> Deref for CpBox<T> {
-//     type Target = T;
-//     fn deref(&self) -> &T {
-//         &self.0
-//     }
-// }
-
 //常量池结构体
 pub struct Constantpool {
     pub count: u16,
-    // pub constants: Vec<Box<dyn CpInfo>>,
     pub constants: HashMap<u16, Box<dyn CpInfo>>,
 }
 
@@ -91,6 +75,7 @@ fn read_const_info(data: &Vec<u8>, pool: &mut Constantpool, index: &mut u32) {
             }),
             _ => Box::new(CpIntinfo { var: 0 }),
         };
+        //long和double占两个槽位
         if tag == 5 || tag == 6 {
             counter = counter + 2;
         } else {
@@ -106,13 +91,11 @@ pub fn read_constant_pool(data: &Vec<u8>) -> u32 {
     let mut index = 8; // 常量池在class文件中的第8个字节开始
     let count = clz_reader::read_u16(data, count, &mut index);
 
-    // let mut constants: Vec<Box<dyn CpInfo>> = Vec::new();
     let mut constants: HashMap<u16, Box<dyn CpInfo>> = HashMap::new();
     let mut constpool = Constantpool {
         count: count,
-        // constants: constants,
         constants: constants,
     };
     read_const_info(data, &mut constpool, &mut index);
-    0
+    index
 }
