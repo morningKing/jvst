@@ -1,6 +1,6 @@
 use super::clz_reader;
 use super::cp_info::CpInfo;
-
+use std::any::Any;
 pub struct CpClassinfo {
     pub class_index: u16, //只存索引值
 }
@@ -12,5 +12,8 @@ impl CpInfo for CpClassinfo {
         self.class_index = class_index;
         println!("classinfo : {}", self.class_index);
         *index
+    }
+    fn as_any(&self) -> &dyn Any {
+        self
     }
 }

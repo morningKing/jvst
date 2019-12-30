@@ -16,6 +16,10 @@ pub struct Constantpool {
     pub constants: HashMap<u16, Box<dyn CpInfo>>,
 }
 
+impl Constantpool {
+    fn get_utf8(index: u16, res: String) {}
+}
+
 fn read_const_info(data: &Vec<u8>, pool: &mut Constantpool, index: &mut u32) {
     let mut counter: u16 = 1;
 
@@ -98,4 +102,14 @@ pub fn read_constant_pool(data: &Vec<u8>) -> u32 {
     };
     read_const_info(data, &mut constpool, &mut index);
     index
+}
+
+pub fn get_utf8(cp: &Constantpool, index: u16, res: &mut String) {
+    let bt = cp.constants.get(&index).unwrap();
+    //https://stackoverflow.com/questions/33687447/how-to-get-a-reference-to-a-concrete-type-from-a-trait-object
+    let utf8: &CpUTF8info = match bt.as_any().downcast_ref::<CpUTF8info>() {
+        Some(utf8) => utf8,
+        None => panic!("invalid utf8 string"),
+    };
+    *res = utf8.var.clone();
 }

@@ -1,5 +1,7 @@
 use super::clz_reader;
 use super::cp_info::CpInfo;
+use std::any::Any;
+
 pub struct CpInvokeDyninfo {
     pub boot_attr_index: u16,
     pub name_type_index: u16,
@@ -19,6 +21,9 @@ impl CpInfo for CpInvokeDyninfo {
         );
         *index
     }
+    fn as_any(&self) -> &dyn Any {
+        self
+    }
 }
 
 pub struct CpMethodHandleinfo {
@@ -37,6 +42,9 @@ impl CpInfo for CpMethodHandleinfo {
         println!("methodHandleinfo : {},{}", ref_kind, ref_index);
         *index
     }
+    fn as_any(&self) -> &dyn Any {
+        self
+    }
 }
 
 pub struct CpConstMethodTypeinfo {
@@ -50,5 +58,8 @@ impl CpInfo for CpConstMethodTypeinfo {
         self.desc_index = desc_index;
         println!("methodTypeinfo : {}", self.desc_index);
         *index
+    }
+    fn as_any(&self) -> &dyn Any {
+        self
     }
 }

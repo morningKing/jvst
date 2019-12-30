@@ -1,5 +1,6 @@
 use super::clz_reader;
 use super::cp_info::CpInfo;
+use std::any::Any;
 
 pub struct CpStringinfo {
     pub string_index: u16, // 只存索引值
@@ -12,5 +13,8 @@ impl CpInfo for CpStringinfo {
         self.string_index = string_index;
         println!("stringinfo : {}", self.string_index);
         *index
+    }
+    fn as_any(&self) -> &dyn Any {
+        self
     }
 }

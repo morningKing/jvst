@@ -1,5 +1,6 @@
 use super::clz_reader;
 use super::cp_info::CpInfo;
+use std::any::Any;
 
 pub struct CpFieldRefinfo {
     pub class_index: u16,
@@ -19,6 +20,9 @@ impl CpInfo for CpFieldRefinfo {
             self.class_index, self.name_type_index
         );
         *index
+    }
+    fn as_any(&self) -> &dyn Any {
+        self
     }
 }
 
@@ -41,6 +45,9 @@ impl CpInfo for CpIfaceMethodinfo {
         );
         *index
     }
+    fn as_any(&self) -> &dyn Any {
+        self
+    }
 }
 
 pub struct CpMethodRefinfo {
@@ -61,5 +68,8 @@ impl CpInfo for CpMethodRefinfo {
             self.class_index, self.name_type_index
         );
         *index
+    }
+    fn as_any(&self) -> &dyn Any {
+        self
     }
 }

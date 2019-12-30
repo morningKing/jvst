@@ -1,5 +1,7 @@
 use super::clz_reader;
 use super::cp_info::CpInfo;
+use std::any::Any;
+
 pub struct CpNameTypeinfo {
     pub name_index: u16, //名称索引
     pub desc_index: u16, //修饰词索引
@@ -15,5 +17,8 @@ impl CpInfo for CpNameTypeinfo {
         self.desc_index = desc_index;
         println!("nameTypeinfo : {},{}", self.name_index, self.desc_index);
         *index
+    }
+    fn as_any(&self) -> &dyn Any {
+        self
     }
 }

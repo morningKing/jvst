@@ -1,5 +1,6 @@
 use super::clz_reader;
 use super::cp_info::CpInfo;
+use std::any::Any;
 
 pub struct CpUTF8info {
     pub var: String,
@@ -14,5 +15,8 @@ impl CpInfo for CpUTF8info {
         self.var = var;
         println!("utf8info : {}", self.var);
         *index
+    }
+    fn as_any(&self) -> &dyn Any {
+        self
     }
 }

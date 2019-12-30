@@ -1,5 +1,7 @@
 use super::clz_reader;
 use super::cp_info::CpInfo;
+use std::any::Any;
+
 pub struct CpIntinfo {
     pub var: i32,
 }
@@ -11,6 +13,9 @@ impl CpInfo for CpIntinfo {
         self.var = tmp;
         println!("int var : {}", self.var);
         *index
+    }
+    fn as_any(&self) -> &dyn Any {
+        self
     }
 }
 
@@ -26,6 +31,9 @@ impl CpInfo for CpFloatinfo {
         println!("float var : {}", self.var);
         *index
     }
+    fn as_any(&self) -> &dyn Any {
+        self
+    }
 }
 
 pub struct CpLonginfo {
@@ -40,6 +48,9 @@ impl CpInfo for CpLonginfo {
         println!("long var : {}", self.var);
         *index
     }
+    fn as_any(&self) -> &dyn Any {
+        self
+    }
 }
 
 pub struct CpDoubleinfo {
@@ -53,5 +64,8 @@ impl CpInfo for CpDoubleinfo {
         self.var = tmp;
         println!("double var : {}", self.var);
         *index
+    }
+    fn as_any(&self) -> &dyn Any {
+        self
     }
 }
