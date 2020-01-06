@@ -2,12 +2,12 @@ use super::attr_info::Attrinfo;
 use super::const_pool::Constantpool;
 
 pub struct Attrcode {
-    cp: Constantpool,
-    max_stack: u16,
-    max_local: u16,
-    code: Vec<u8>,
-    exception_table: Vec<Exception>,
-    attrs: Vec<Box<dyn Attrinfo>>,
+    pub cp: Constantpool,
+    pub max_stack: u16,
+    pub max_local: u16,
+    pub code: Vec<u8>,
+    pub exception_table: Vec<Exception>,
+    pub attrs: Vec<Box<dyn Attrinfo>>,
 }
 
 pub struct Exception {

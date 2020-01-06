@@ -1,5 +1,13 @@
 pub mod attr_code;
+pub mod attr_const_info;
+pub mod attr_dep_info;
+pub mod attr_exp_info;
 pub mod attr_info;
+pub mod attr_ln_info;
+pub mod attr_lvt_info;
+pub mod attr_src_info;
+pub mod attr_syn_info;
+pub mod attr_tbc;
 pub mod clz_reader;
 pub mod const_pool;
 pub mod cp_class_info;

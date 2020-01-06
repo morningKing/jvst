@@ -113,6 +113,18 @@ pub fn read_f32(data: &[u8], mut res: f32, index: &mut u32) -> f32 {
     res
 }
 
+pub fn read_u32(data: &[u8], mut res: u32, index: &mut u32) -> u32 {
+    let end = *index + 4;
+    let tmparr = pop32(data, *index, end);
+    *index = *index + 4;
+    let mut arr = *tmparr;
+    unsafe {
+        arr.reverse(); //transmute函数要对传入的数组做逆序处理 如[0,1] => 256 [1,0] => 1
+        res = mem::transmute::<[u8; 4], u32>(arr);
+    }
+    res
+}
+
 pub fn read_i64(data: &[u8], mut res: i64, index: &mut u32) -> i64 {
     let end = *index + 8;
     let tmparr = pop64(data, *index, end);
