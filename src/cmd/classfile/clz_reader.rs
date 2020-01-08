@@ -163,9 +163,19 @@ pub fn read_utf8(data: &[u8], mut res: String, index: &mut u32, len: u32) -> Str
 pub fn read_u16s(data: &[u8], slice: &mut Vec<u16>, index: &mut u32) {
     let mut count = 0;
     count = read_u16(data, count, index);
-    for i in (0..count) {
+    for i in 0..count {
         let mut res = 0;
         res = read_u16(data, res, index);
         slice.push(res);
+    }
+}
+
+pub fn read_u8s(data: &[u8], slice: &mut Vec<u8>, index: &mut u32, len: u32) {
+    let start = *index;
+    *index = *index + len;
+    for i in start..*index {
+        //try_into unwarp 转换成uszie
+        let ix: usize = i.try_into().unwrap();
+        slice.push(data[ix]);
     }
 }

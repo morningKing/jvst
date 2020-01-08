@@ -8,43 +8,52 @@ use super::attr_src_info::AttrSrcInfo;
 use super::attr_syn_info::AttrSynInfo;
 use super::attr_tbc::AttrTbcInfo;
 use super::clz_reader;
-use super::const_pool;
 use super::const_pool::Constantpool;
 
 pub trait Attrinfo {
     fn read_inf(&mut self, data: &Vec<u8>, index: &mut u32);
 }
-fn read_attrs(
+pub fn read_attrs<'a>(
     data: &Vec<u8>,
     index: &mut u32,
-    pool: &Constantpool,
-    attrs: &Vec<Box<dyn Attrinfo>>,
+    pool: &'a Constantpool,
+    attrs: &mut Vec<Box<dyn Attrinfo + 'a>>,
 ) {
     let mut count = 0;
     count = clz_reader::read_u16(data, count, index);
-    for i in (0..count) {}
+    for i in 0..count {
+        read_attr(data, index, pool, attrs);
+    }
 }
 
-fn read_attr(data: &Vec<u8>, index: &mut u32, cp: &Constantpool, attrs: &Vec<Box<dyn Attrinfo>>) {
+fn read_attr<'a>(
+    data: &Vec<u8>,
+    index: &mut u32,
+    cp: &'a Constantpool,
+    attrs: &mut Vec<Box<dyn Attrinfo + 'a>>,
+) {
     let mut attr_nm_index = 0;
     attr_nm_index = clz_reader::read_u16(data, attr_nm_index, index);
     let mut attr_nm_string = String::from("");
-    const_pool::get_utf8(cp, attr_nm_index, &mut attr_nm_string);
+    cp.get_utf8(attr_nm_index, &mut attr_nm_string);
     let mut attr_len = 0;
     attr_len = clz_reader::read_u32(data, attr_len, index);
+    attrs.push(new_attr(data, index, attr_nm_string, attr_len, cp));
 }
 
 fn new_attr<'a>(
     data: &Vec<u8>,
     index: &mut u32,
     nm: String,
-    cp: &Constantpool,
-) -> Box<dyn Attrinfo> {
+    length: u32,
+    cp: &'a Constantpool,
+) -> Box<dyn Attrinfo + 'a> {
+    //带生命周期的返回
     //先解引用，在调用&转成&str
     let dnm = &(*nm);
-    let attr: Box<dyn Attrinfo> = match dnm {
+    let mut attr: Box<dyn Attrinfo + 'a> = match dnm {
         "code" => Box::new(Attrcode {
-            cp: *cp,
+            cp: cp,
             max_stack: 0,
             max_local: 0,
             code: Vec::new(),
@@ -61,15 +70,16 @@ fn new_attr<'a>(
             local_var_table: Vec::new(),
         }),
         "SourceFile" => Box::new(AttrSrcInfo {
-            cp: *cp,
+            cp: cp,
             src_index: 0,
         }),
         "Synthetic" => Box::new(AttrSynInfo {}),
         _ => Box::new(AttrTbcInfo {
             name: nm,
-            length: 0,
+            length: length,
             info: Vec::new(),
         }),
     };
+    attr.read_inf(data, index);
     attr
 }
