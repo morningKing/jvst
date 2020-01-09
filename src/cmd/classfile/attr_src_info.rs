@@ -1,4 +1,4 @@
-use super::attr_info::Attrinfo;
+use super::attr_info::AttrInfo;
 use super::clz_reader;
 use super::const_pool::Constantpool;
 
@@ -7,7 +7,7 @@ pub struct AttrSrcInfo<'a> {
     pub src_index: u16,
 }
 
-impl<'a> Attrinfo for AttrSrcInfo<'a> {
+impl<'a> AttrInfo for AttrSrcInfo<'a> {
     fn read_inf(&mut self, data: &Vec<u8>, index: &mut u32) {
         self.src_index = clz_reader::read_u16(data, self.src_index, index);
     }

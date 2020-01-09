@@ -1,4 +1,4 @@
-use super::attr_info::Attrinfo;
+use super::attr_info::AttrInfo;
 use super::clz_reader;
 
 pub struct AttrLocalVarTabInfo {
@@ -13,7 +13,7 @@ pub struct LocalVarTabEntry {
     pub index: u16,
 }
 
-impl Attrinfo for AttrLocalVarTabInfo {
+impl AttrInfo for AttrLocalVarTabInfo {
     fn read_inf(&mut self, data: &Vec<u8>, index: &mut u32) {
         let mut lvt_len = 0;
         lvt_len = clz_reader::read_u16(data, lvt_len, index);

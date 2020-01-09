@@ -2,12 +2,12 @@ use super::clz_reader;
 use super::cp_info::CpInfo;
 use std::any::Any;
 
-pub struct CpFieldRefinfo {
+pub struct CpFieldRefInfo {
     pub class_index: u16,
     pub name_type_index: u16,
 }
 
-impl CpInfo for CpFieldRefinfo {
+impl CpInfo for CpFieldRefInfo {
     fn read_inf(&mut self, data: &Vec<u8>, index: &mut u32) -> u32 {
         let class_index = 0;
         let class_index = clz_reader::read_u16(data, class_index, index);

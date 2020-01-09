@@ -2,12 +2,12 @@ use super::clz_reader;
 use super::cp_info::CpInfo;
 use std::any::Any;
 
-pub struct CpInvokeDyninfo {
+pub struct CpInvokeDynInfo {
     pub boot_attr_index: u16,
     pub name_type_index: u16,
 }
 
-impl CpInfo for CpInvokeDyninfo {
+impl CpInfo for CpInvokeDynInfo {
     fn read_inf(&mut self, data: &Vec<u8>, index: &mut u32) -> u32 {
         let boot_attr_index = 0;
         let boot_attr_index = clz_reader::read_u16(data, boot_attr_index, index);

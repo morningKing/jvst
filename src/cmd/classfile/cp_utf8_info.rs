@@ -2,11 +2,11 @@ use super::clz_reader;
 use super::cp_info::CpInfo;
 use std::any::Any;
 
-pub struct CpUTF8info {
+pub struct CpUTF8Info {
     pub var: String,
 }
 
-impl CpInfo for CpUTF8info {
+impl CpInfo for CpUTF8Info {
     fn read_inf(&mut self, data: &Vec<u8>, index: &mut u32) -> u32 {
         let mut var = String::from("");
         let len = 0;

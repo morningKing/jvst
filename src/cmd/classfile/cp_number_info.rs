@@ -19,11 +19,11 @@ impl CpInfo for CpIntinfo {
     }
 }
 
-pub struct CpFloatinfo {
+pub struct CpFloatInfo {
     pub var: f32,
 }
 
-impl CpInfo for CpFloatinfo {
+impl CpInfo for CpFloatInfo {
     fn read_inf(&mut self, data: &Vec<u8>, index: &mut u32) -> u32 {
         let tmp: f32 = 0.0;
         let tmp = clz_reader::read_f32(data, tmp, index);

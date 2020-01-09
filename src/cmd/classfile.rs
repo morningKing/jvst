@@ -19,15 +19,9 @@ pub mod cp_ref_info;
 pub mod cp_string_info;
 pub mod cp_utf8_info;
 pub mod memb_info;
-pub struct constant_info {}
+use std::collections::HashMap;
 
-pub struct field {}
-
-pub struct method {}
-
-pub struct iface {}
-
-pub struct Classfile {
+pub struct Classfile<'a> {
     pub magic: u32,
     pub minor_version: u16,
     pub major_version: u16,
@@ -36,27 +30,48 @@ pub struct Classfile {
     pub this_class: u16,
     pub super_class: u16,
     pub iface_count: u16,
-    pub ifaces: Vec<iface>,
+    pub ifaces: Vec<u16>,
     pub fields_count: u16,
-    pub fields: Vec<field>,
+    pub fields: Vec<memb_info::MemberInfo<'a>>,
     pub methods_count: u16,
-    pub methods: Vec<method>,
+    pub methods: Vec<memb_info::MemberInfo<'a>>,
 }
 
 pub fn readclz(data: &Vec<u8>) {
     let mut index = 0;
+    //魔数 cafebabe
     read_chk_magic(data);
+    //副版本号
     read_chk_minor_version(data);
+    //主版本号
     read_chk_major_version(data);
-    index = const_pool::read_constant_pool(data);
+    //解析常量池
+    let mut cp = const_pool::Constantpool {
+        count: 0,
+        constants: HashMap::new(),
+    };
+    index = const_pool::read_constant_pool(data, &mut cp);
+    //访问标志位
     let mut access_flag = 0;
     access_flag = clz_reader::read_u16(data, access_flag, &mut index);
+    //this
     let mut this_class = 0;
     this_class = clz_reader::read_u16(data, this_class, &mut index);
+    //父类
     let mut super_class = 0;
     super_class = clz_reader::read_u16(data, super_class, &mut index);
+    //接口
     let mut slice: Vec<u16> = Vec::new();
     clz_reader::read_u16s(data, &mut slice, &mut index);
+    //成员
+    let mut fields: Vec<memb_info::MemberInfo> = Vec::new();
+    memb_info::read_mems_info(data, &cp, &mut index, &mut fields);
+    //成员方法
+    let mut methods: Vec<memb_info::MemberInfo> = Vec::new();
+    memb_info::read_mems_info(data, &cp, &mut index, &mut methods);
+    //属性表
+    let mut attrs: Vec<Box<dyn attr_info::AttrInfo>> = Vec::new();
+    attr_info::read_attrs(data, &mut index, &cp, &mut attrs);
 }
 
 //检查4字节魔数 cafababe

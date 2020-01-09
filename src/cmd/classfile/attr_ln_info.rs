@@ -1,4 +1,4 @@
-use super::attr_info::Attrinfo;
+use super::attr_info::AttrInfo;
 use super::clz_reader;
 
 pub struct AttrLineNmInfo {
@@ -10,7 +10,7 @@ pub struct LineNmEntry {
     pub line_nm: u16,
 }
 
-impl Attrinfo for AttrLineNmInfo {
+impl AttrInfo for AttrLineNmInfo {
     fn read_inf(&mut self, data: &Vec<u8>, index: &mut u32) {
         let mut ln_len = 0;
         ln_len = clz_reader::read_u16(data, ln_len, index);

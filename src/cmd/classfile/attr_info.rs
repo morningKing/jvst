@@ -10,14 +10,14 @@ use super::attr_tbc::AttrTbcInfo;
 use super::clz_reader;
 use super::const_pool::Constantpool;
 
-pub trait Attrinfo {
+pub trait AttrInfo {
     fn read_inf(&mut self, data: &Vec<u8>, index: &mut u32);
 }
 pub fn read_attrs<'a>(
     data: &Vec<u8>,
     index: &mut u32,
     pool: &'a Constantpool,
-    attrs: &mut Vec<Box<dyn Attrinfo + 'a>>,
+    attrs: &mut Vec<Box<dyn AttrInfo + 'a>>,
 ) {
     let mut count = 0;
     count = clz_reader::read_u16(data, count, index);
@@ -30,7 +30,7 @@ fn read_attr<'a>(
     data: &Vec<u8>,
     index: &mut u32,
     cp: &'a Constantpool,
-    attrs: &mut Vec<Box<dyn Attrinfo + 'a>>,
+    attrs: &mut Vec<Box<dyn AttrInfo + 'a>>,
 ) {
     let mut attr_nm_index = 0;
     attr_nm_index = clz_reader::read_u16(data, attr_nm_index, index);
@@ -47,11 +47,11 @@ fn new_attr<'a>(
     nm: String,
     length: u32,
     cp: &'a Constantpool,
-) -> Box<dyn Attrinfo + 'a> {
+) -> Box<dyn AttrInfo + 'a> {
     //带生命周期的返回
     //先解引用，在调用&转成&str
     let dnm = &(*nm);
-    let mut attr: Box<dyn Attrinfo + 'a> = match dnm {
+    let mut attr: Box<dyn AttrInfo + 'a> = match dnm {
         "code" => Box::new(Attrcode {
             cp: cp,
             max_stack: 0,

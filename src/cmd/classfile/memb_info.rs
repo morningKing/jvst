@@ -1,5 +1,5 @@
 use super::attr_info;
-use super::attr_info::Attrinfo;
+use super::attr_info::AttrInfo;
 use super::clz_reader;
 use super::const_pool::Constantpool;
 
@@ -8,10 +8,15 @@ pub struct MemberInfo<'a> {
     pub access_flag: u16,
     pub name_index: u16,
     pub desc_index: u16,
-    pub attrs: Vec<Box<dyn Attrinfo + 'a>>,
+    pub attrs: Vec<Box<dyn AttrInfo + 'a>>,
 }
 
-fn read_mems_info(data: &Vec<u8>, cp: &Constantpool, index: &mut u32, mems: &mut Vec<MemberInfo>) {
+pub fn read_mems_info<'a>(
+    data: &Vec<u8>,
+    cp: &'a Constantpool,
+    index: &mut u32,
+    mems: &mut Vec<MemberInfo<'a>>,
+) {
     let mut mems_num = 0;
     mems_num = clz_reader::read_u16(data, mems_num, index);
     for i in 0..mems_num {

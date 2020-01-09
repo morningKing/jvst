@@ -1,5 +1,5 @@
 use super::attr_info;
-use super::attr_info::Attrinfo;
+use super::attr_info::AttrInfo;
 use super::clz_reader;
 use super::const_pool::Constantpool;
 pub struct Attrcode<'a> {
@@ -8,7 +8,7 @@ pub struct Attrcode<'a> {
     pub max_local: u16,
     pub code: Vec<u8>,
     pub exception_table: Vec<Exception>,
-    pub attrs: Vec<Box<dyn Attrinfo + 'a>>,
+    pub attrs: Vec<Box<dyn AttrInfo + 'a>>,
 }
 
 pub struct Exception {
@@ -19,7 +19,7 @@ pub struct Exception {
 }
 
 //带生命周期的结构体实现trait
-impl<'a> Attrinfo for Attrcode<'a> {
+impl<'a> AttrInfo for Attrcode<'a> {
     fn read_inf(&mut self, data: &Vec<u8>, index: &mut u32) {
         self.max_stack = clz_reader::read_u16(data, self.max_stack, index);
         self.max_local = clz_reader::read_u16(data, self.max_local, index);
