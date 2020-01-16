@@ -19,14 +19,16 @@ pub mod cp_ref_info;
 pub mod cp_string_info;
 pub mod cp_utf8_info;
 pub mod memb_info;
-use std::collections::HashMap;
+use clz_reader::{read_u16, read_u16s};
+use const_pool::Constantpool;
+use std::convert::TryInto;
 
 pub struct Classfile<'a> {
-    pub magic: u32,
-    pub minor_version: u16,
-    pub major_version: u16,
-    pub const_pool: const_pool::Constantpool,
-    pub access_flags: u16,
+    pub magic: String,
+    pub minor_v: String,
+    pub major_v: String,
+    pub const_pool: &'a Constantpool<'a>,
+    pub access_flag: u16,
     pub this_class: u16,
     pub super_class: u16,
     pub iface_count: u16,
@@ -37,64 +39,57 @@ pub struct Classfile<'a> {
     pub methods: Vec<memb_info::MemberInfo<'a>>,
 }
 
-pub fn readclz(data: &Vec<u8>) {
-    let mut index = 0;
-    //魔数 cafebabe
-    read_chk_magic(data);
-    //副版本号
-    read_chk_minor_version(data);
-    //主版本号
-    read_chk_major_version(data);
-    //解析常量池
-    let mut cp = const_pool::Constantpool {
-        count: 0,
-        constants: HashMap::new(),
+pub fn readclz<'a>(data: &'a Vec<u8>) {
+    let mut index = 8; //常量池从第8位开始
+    let mut class = Classfile {
+        magic: read_chk_magic(data),
+        minor_v: read_chk_minor_version(data),
+        major_v: read_chk_major_version(data),
+        const_pool: &const_pool::read_constant_pool(data, &mut index),
+        access_flag: read_u16(data, &mut index),
+        this_class: read_u16(data, &mut index),
+        super_class: read_u16(data, &mut index),
+        iface_count: 0,
+        ifaces: read_u16s(data, &mut index),
+        fields_count: 0,
+        fields: Vec::new(),
+        methods_count: 0,
+        methods: Vec::new(),
     };
-    index = const_pool::read_constant_pool(data, &mut cp);
-    //访问标志位
-    let mut access_flag = 0;
-    access_flag = clz_reader::read_u16(data, access_flag, &mut index);
-    //this
-    let mut this_class = 0;
-    this_class = clz_reader::read_u16(data, this_class, &mut index);
-    //父类
-    let mut super_class = 0;
-    super_class = clz_reader::read_u16(data, super_class, &mut index);
-    //接口
-    let mut slice: Vec<u16> = Vec::new();
-    clz_reader::read_u16s(data, &mut slice, &mut index);
+    //结构数量
+    class.iface_count = class.ifaces.len().try_into().unwrap();
     //成员
-    let mut fields: Vec<memb_info::MemberInfo> = Vec::new();
-    memb_info::read_mems_info(data, &cp, &mut index, &mut fields);
+    class.fields = memb_info::read_mems_info(data, class.const_pool, &mut index);
+    class.fields_count = class.fields.len().try_into().unwrap();
     //成员方法
-    let mut methods: Vec<memb_info::MemberInfo> = Vec::new();
-    memb_info::read_mems_info(data, &cp, &mut index, &mut methods);
+    class.methods = memb_info::read_mems_info(data, class.const_pool, &mut index);
+    class.methods_count = class.methods.len().try_into().unwrap();
     //属性表
     let mut attrs: Vec<Box<dyn attr_info::AttrInfo>> = Vec::new();
-    attr_info::read_attrs(data, &mut index, &cp, &mut attrs);
+    attr_info::read_attrs(data, &mut index, class.const_pool, &mut attrs);
 }
 
 //检查4字节魔数 cafababe
-pub fn read_chk_magic(data: &Vec<u8>) -> u32 {
+pub fn read_chk_magic(data: &Vec<u8>) -> String {
     let res = String::from("");
     let mut index = 0;
     let res = clz_reader::read_u32_string(data, res, &mut index);
     println!("magic : {}, index : {}", res, index);
-    index
+    res
 }
 //检查主版本号
-pub fn read_chk_major_version(data: &Vec<u8>) -> u32 {
+pub fn read_chk_major_version(data: &Vec<u8>) -> String {
     let res = String::from("");
     let mut index = 6;
     let res = clz_reader::read_u16_string(data, res, &mut index);
     println!("major version : {}, index : {}", res, index);
-    index
+    res
 }
 //检查次版本号
-pub fn read_chk_minor_version(data: &Vec<u8>) -> u32 {
+pub fn read_chk_minor_version(data: &Vec<u8>) -> String {
     let res = String::from("");
     let mut index = 4;
     let res = clz_reader::read_u16_string(data, res, &mut index);
     println!("minor version : {}, index : {}", res, index);
-    index
+    res
 }

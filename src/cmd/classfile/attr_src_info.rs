@@ -3,13 +3,13 @@ use super::clz_reader;
 use super::const_pool::Constantpool;
 
 pub struct AttrSrcInfo<'a> {
-    pub cp: &'a Constantpool,
+    pub cp: &'a Constantpool<'a>,
     pub src_index: u16,
 }
 
 impl<'a> AttrInfo for AttrSrcInfo<'a> {
     fn read_inf(&mut self, data: &Vec<u8>, index: &mut u32) {
-        self.src_index = clz_reader::read_u16(data, self.src_index, index);
+        self.src_index = clz_reader::read_u16(data, index);
     }
 }
 

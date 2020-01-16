@@ -8,8 +8,7 @@ pub struct CpStringInfo {
 
 impl CpInfo for CpStringInfo {
     fn read_inf(&mut self, data: &Vec<u8>, index: &mut u32) -> u32 {
-        let string_index = 0;
-        let string_index = clz_reader::read_u16(data, string_index, index);
+        let string_index = clz_reader::read_u16(data, index);
         self.string_index = string_index;
         println!("stringinfo : {}", self.string_index);
         *index

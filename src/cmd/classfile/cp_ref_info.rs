@@ -9,11 +9,9 @@ pub struct CpFieldRefInfo {
 
 impl CpInfo for CpFieldRefInfo {
     fn read_inf(&mut self, data: &Vec<u8>, index: &mut u32) -> u32 {
-        let class_index = 0;
-        let class_index = clz_reader::read_u16(data, class_index, index);
+        let class_index = clz_reader::read_u16(data, index);
         self.class_index = class_index;
-        let name_type_index = 0;
-        let name_type_index = clz_reader::read_u16(data, name_type_index, index);
+        let name_type_index = clz_reader::read_u16(data, index);
         self.name_type_index = name_type_index;
         println!(
             "fieldRefinfo : {},{}",
@@ -33,11 +31,9 @@ pub struct CpIfaceMethodinfo {
 
 impl CpInfo for CpIfaceMethodinfo {
     fn read_inf(&mut self, data: &Vec<u8>, index: &mut u32) -> u32 {
-        let class_index = 0;
-        let class_index = clz_reader::read_u16(data, class_index, index);
+        let class_index = clz_reader::read_u16(data, index);
         self.class_index = class_index;
-        let name_type_index = 0;
-        let name_type_index = clz_reader::read_u16(data, name_type_index, index);
+        let name_type_index = clz_reader::read_u16(data, index);
         self.name_type_index = name_type_index;
         println!(
             "ifaceMethodinfo : {},{}",
@@ -57,11 +53,9 @@ pub struct CpMethodRefinfo {
 
 impl CpInfo for CpMethodRefinfo {
     fn read_inf(&mut self, data: &Vec<u8>, index: &mut u32) -> u32 {
-        let class_index = 0;
-        let class_index = clz_reader::read_u16(data, class_index, index);
+        let class_index = clz_reader::read_u16(data, index);
         self.class_index = class_index;
-        let name_type_index = 0;
-        let name_type_index = clz_reader::read_u16(data, name_type_index, index);
+        let name_type_index = clz_reader::read_u16(data, index);
         self.name_type_index = name_type_index;
         println!(
             "methodRefinfo : {},{}",

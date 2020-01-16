@@ -27,23 +27,6 @@ fn pop16(barry: &[u8], start: u32, end: u32) -> &[u8; 2] {
         .expect("slice with incorrect length")
 }
 
-// pub fn read_u8_string(data: &[u8], mut res: String, index: &mut u32) -> String {
-//     let tmparr: [u8; 1] = [0; 1];
-//     let end = *index + 1;
-//     let mut tix = 0;
-//     for (i, n) in data.iter().enumerate() {
-//         if i >= (*index).try_into().unwrap() && i < end.try_into().unwrap() {
-//             tmparr[tix] = *n;
-//             tix = tix + 1;
-//         } else if i == end.try_into().unwrap() {
-//             break;
-//         }
-//     }
-//     *index = *index + 1;
-//     res = hex::encode(tmparr);
-//     res
-// }
-
 pub fn read_u8(data: &[u8], mut res: u8, mut index: &mut u32) -> u8 {
     let mut tmparr: [u8; 1] = [0; 1];
     let end = *index + 1;
@@ -69,7 +52,8 @@ pub fn read_u16_string(data: &[u8], mut res: String, index: &mut u32) -> (String
     res
 }
 
-pub fn read_u16(data: &[u8], mut res: u16, mut index: &mut u32) -> u16 {
+pub fn read_u16(data: &[u8], mut index: &mut u32) -> u16 {
+    let mut res = 0;
     let end = *index + 2;
     let tmparr = pop16(data, *index, end);
     *index = *index + 2;
@@ -160,14 +144,15 @@ pub fn read_utf8(data: &[u8], mut res: String, index: &mut u32, len: u32) -> Str
     res
 }
 
-pub fn read_u16s(data: &[u8], slice: &mut Vec<u16>, index: &mut u32) {
-    let mut count = 0;
-    count = read_u16(data, count, index);
+pub fn read_u16s(data: &[u8], index: &mut u32) -> Vec<u16> {
+    let mut slice: Vec<u16> = Vec::new();
+    let count = read_u16(data, index);
     for i in 0..count {
         let mut res = 0;
-        res = read_u16(data, res, index);
+        res = read_u16(data, index);
         slice.push(res);
     }
+    slice
 }
 
 pub fn read_u8s(data: &[u8], slice: &mut Vec<u8>, index: &mut u32, len: u32) {

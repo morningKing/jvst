@@ -15,8 +15,7 @@ pub struct LocalVarTabEntry {
 
 impl AttrInfo for AttrLocalVarTabInfo {
     fn read_inf(&mut self, data: &Vec<u8>, index: &mut u32) {
-        let mut lvt_len = 0;
-        lvt_len = clz_reader::read_u16(data, lvt_len, index);
+        let lvt_len = clz_reader::read_u16(data, index);
         for i in 0..lvt_len {
             let mut lvt = LocalVarTabEntry {
                 start_pc: 0,
@@ -25,11 +24,11 @@ impl AttrInfo for AttrLocalVarTabInfo {
                 desc_index: 0,
                 index: 0,
             };
-            lvt.start_pc = clz_reader::read_u16(data, lvt.start_pc, index);
-            lvt.length = clz_reader::read_u16(data, lvt.length, index);
-            lvt.nm_index = clz_reader::read_u16(data, lvt.nm_index, index);
-            lvt.desc_index = clz_reader::read_u16(data, lvt.desc_index, index);
-            lvt.index = clz_reader::read_u16(data, lvt.index, index);
+            lvt.start_pc = clz_reader::read_u16(data, index);
+            lvt.length = clz_reader::read_u16(data, index);
+            lvt.nm_index = clz_reader::read_u16(data, index);
+            lvt.desc_index = clz_reader::read_u16(data, index);
+            lvt.index = clz_reader::read_u16(data, index);
             self.local_var_table.push(lvt);
         }
     }

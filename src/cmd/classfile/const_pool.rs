@@ -11,12 +11,12 @@ use std::collections::HashMap;
 // use std::ops::Deref;
 
 //常量池结构体
-pub struct Constantpool {
+pub struct Constantpool<'a> {
     pub count: u16,
-    pub constants: HashMap<u16, Box<dyn CpInfo>>,
+    pub constants: HashMap<u16, Box<dyn CpInfo + 'a>>,
 }
 
-impl Constantpool {
+impl<'a> Constantpool<'a> {
     pub fn get_utf8(&self, index: u16, res: &mut String) {
         let bt = self.constants.get(&index).unwrap();
         //https://stackoverflow.com/questions/33687447/how-to-get-a-reference-to-a-concrete-type-from-a-trait-object
@@ -28,13 +28,15 @@ impl Constantpool {
     }
 }
 
-pub fn read_constant_pool(data: &Vec<u8>, constpool: &mut Constantpool) -> u32 {
-    let count = 0;
-    let mut index = 8; // 常量池在class文件中的第8个字节开始
-    let count = clz_reader::read_u16(data, count, &mut index);
-    constpool.count = count;
-    read_const_info(data, constpool, &mut index);
-    index
+pub fn read_constant_pool<'a>(data: &'a Vec<u8>, index: &mut u32) -> Constantpool<'a> {
+    let mut cp = Constantpool {
+        count: 0,
+        constants: HashMap::new(),
+    };
+    let count = clz_reader::read_u16(data, index);
+    cp.count = count;
+    read_const_info(data, &mut cp, index);
+    cp
 }
 
 fn read_const_info(data: &Vec<u8>, pool: &mut Constantpool, index: &mut u32) {

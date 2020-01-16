@@ -12,15 +12,14 @@ pub struct LineNmEntry {
 
 impl AttrInfo for AttrLineNmInfo {
     fn read_inf(&mut self, data: &Vec<u8>, index: &mut u32) {
-        let mut ln_len = 0;
-        ln_len = clz_reader::read_u16(data, ln_len, index);
+        let ln_len = clz_reader::read_u16(data, index);
         for i in 0..ln_len {
             let mut ln = LineNmEntry {
                 start_pc: 0,
                 line_nm: 0,
             };
-            ln.start_pc = clz_reader::read_u16(data, ln.start_pc, index);
-            ln.line_nm = clz_reader::read_u16(data, ln.line_nm, index);
+            ln.start_pc = clz_reader::read_u16(data, index);
+            ln.line_nm = clz_reader::read_u16(data, index);
             self.ln.push(ln);
         }
     }

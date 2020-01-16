@@ -9,8 +9,7 @@ pub struct CpUTF8Info {
 impl CpInfo for CpUTF8Info {
     fn read_inf(&mut self, data: &Vec<u8>, index: &mut u32) -> u32 {
         let mut var = String::from("");
-        let len = 0;
-        let len = clz_reader::read_u16(data, len, index) as u32;
+        let len = clz_reader::read_u16(data, index) as u32;
         var = clz_reader::read_utf8(data, var, index, len);
         self.var = var;
         println!("utf8info : {}", self.var);

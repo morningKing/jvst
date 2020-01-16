@@ -7,8 +7,7 @@ pub struct CpClassInfo {
 
 impl CpInfo for CpClassInfo {
     fn read_inf(&mut self, data: &Vec<u8>, index: &mut u32) -> u32 {
-        let class_index = 0;
-        let class_index = clz_reader::read_u16(data, class_index, index);
+        let class_index = clz_reader::read_u16(data, index);
         self.class_index = class_index;
         println!("classinfo : {}", self.class_index);
         *index

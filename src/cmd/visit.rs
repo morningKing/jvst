@@ -1,4 +1,5 @@
 use super::classfile;
+
 use std::fs::{self, DirEntry, File};
 use std::io;
 use std::io::prelude::*;
@@ -32,7 +33,6 @@ pub fn visit_zip(clz_zip: &Path, paths: &mut Vec<String>, clz_nm: &str) -> io::R
         let name = file.name();
         if (name.ends_with(clz_nm)) {
             paths.push(name.to_string());
-
             let mut buffer = Vec::new();
             file.read_to_end(&mut buffer)?;
             classfile::readclz(&buffer);
@@ -46,12 +46,10 @@ fn cb_eqn(de: &DirEntry, paths: &mut Vec<String>, clz_nm: &str) -> io::Result<()
     if let Some(p) = de.path().to_str() {
         if p.ends_with(clz_nm) {
             paths.push(p.to_string());
-
             let mut file = File::open(p)?;
             let mut buffer = Vec::new();
             file.read_to_end(&mut buffer)?;
             classfile::readclz(&buffer);
-            return Ok(());
         } else {
             return Ok(());
         }

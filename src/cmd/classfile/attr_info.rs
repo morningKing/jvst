@@ -19,8 +19,7 @@ pub fn read_attrs<'a>(
     pool: &'a Constantpool,
     attrs: &mut Vec<Box<dyn AttrInfo + 'a>>,
 ) {
-    let mut count = 0;
-    count = clz_reader::read_u16(data, count, index);
+    let count = clz_reader::read_u16(data, index);
     for i in 0..count {
         read_attr(data, index, pool, attrs);
     }
@@ -32,8 +31,7 @@ fn read_attr<'a>(
     cp: &'a Constantpool,
     attrs: &mut Vec<Box<dyn AttrInfo + 'a>>,
 ) {
-    let mut attr_nm_index = 0;
-    attr_nm_index = clz_reader::read_u16(data, attr_nm_index, index);
+    let attr_nm_index = clz_reader::read_u16(data, index);
     let mut attr_nm_string = String::from("");
     cp.get_utf8(attr_nm_index, &mut attr_nm_string);
     let mut attr_len = 0;
