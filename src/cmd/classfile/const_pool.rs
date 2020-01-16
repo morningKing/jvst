@@ -40,10 +40,10 @@ pub fn read_constant_pool<'a>(data: &'a Vec<u8>, index: &mut u32) -> Constantpoo
 }
 
 fn read_const_info(data: &Vec<u8>, pool: &mut Constantpool, index: &mut u32) {
-    let mut counter: u16 = 1;
+    let mut counter: u16 = 0;
 
     loop {
-        if counter == pool.count {
+        if counter == pool.count - 1 {
             break;
         }
         let mut tag = 0;
@@ -105,6 +105,7 @@ fn read_const_info(data: &Vec<u8>, pool: &mut Constantpool, index: &mut u32) {
             counter = counter + 1;
         }
         cpbox.read_inf(data, index);
+        println!("current index is {}", counter);
         pool.constants.insert(counter, cpbox);
     }
 }
